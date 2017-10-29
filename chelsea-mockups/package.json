@@ -1,8 +1,8 @@
 {
-  "title": "Clean Blog",
-  "name": "startbootstrap-clean-blog",
+  "title": "Pyramid Learning Journal, Chelsea Dole",
+  "name": "pyramid-learning-journal",
   "version": "4.0.0-beta.2",
-  "description": "Clean Blog is a Medium inspired blog theme for Bootstrap.",
+  "description": "Chelsea Dole, 401 Pyramid LJ.",
   "keywords": [
     "css",
     "sass",
@@ -11,19 +11,11 @@
     "theme",
     "template"
   ],
-  "homepage": "https://startbootstrap.com/template-overviews/clean-blog",
-  "bugs": {
-    "url": "https://github.com/BlackrockDigital/startbootstrap-clean-blog/issues",
-    "email": "feedback@startbootstrap.com"
-  },
   "license": "MIT",
-  "author": "Start Bootstrap",
-  "contributors": [
-    "David Miller (http://davidmiller.io/)"
-  ],
+  "author": "Chelsea Dole",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BlackrockDigital/startbootstrap-clean-blog.git"
+    "url": "https://github.com/chelseadole/pyramid-learning-journal.git"
   },
   "dependencies": {
     "bootstrap": "^4.0.0-beta.2",
