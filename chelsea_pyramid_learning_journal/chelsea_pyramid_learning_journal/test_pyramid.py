@@ -1,65 +1,54 @@
-import unittest
-import transaction
+"""Test files for Pyramid Learning Journal."""
 
+from __future__ import unicode_literals
 from pyramid import testing
+import pytest
 
 
-def dummy_request(dbsession):
-    return testing.DummyRequest(dbsession=dbsession)
+@pytest.fixture
+def dummy_request():
+    """Create dummy request fixture."""
+    return testing.DummyRequest()
 
 
-class BaseTest(unittest.TestCase):
-    def setUp(self):
-        self.config = testing.setUp(settings={
-            'sqlalchemy.url': 'sqlite:///:memory:'
-        })
-        self.config.include('.models')
-        settings = self.config.get_settings()
-
-        from .models import (
-            get_engine,
-            get_session_factory,
-            get_tm_session,
-            )
-
-        self.engine = get_engine(settings)
-        session_factory = get_session_factory(self.engine)
-
-        self.session = get_tm_session(session_factory, transaction.manager)
-
-    def init_database(self):
-        from .models.meta import Base
-        Base.metadata.create_all(self.engine)
-
-    def tearDown(self):
-        from .models.meta import Base
-
-        testing.tearDown()
-        transaction.abort()
-        Base.metadata.drop_all(self.engine)
+def test_list_view_response_status_200_ok(dummy_request):
+    """Test list view."""
+    from chelsea_pyramid_learning_journal.views.default import list_view
+    response = list_view(dummy_request)
+    assert response.status_code == 200
 
 
-class TestMyViewSuccessCondition(BaseTest):
-
-    def setUp(self):
-        super(TestMyViewSuccessCondition, self).setUp()
-        self.init_database()
-
-        from .models import MyModel
-
-        model = MyModel(name='one', value=55)
-        self.session.add(model)
-
-    def test_passing_view(self):
-        from .views.default import my_view
-        info = my_view(dummy_request(self.session))
-        self.assertEqual(info['one'].name, 'one')
-        self.assertEqual(info['project'], 'chelsea_pyramid_learning_journal')
+def test_list_view_response_is_html(dummy_request):
+    """Test html contents in list view."""
+    from chelsea_pyramid_learning_journal.views.default import list_view
+    response = list_view(dummy_request)
+    assert response.content_type == 'text/html'
 
 
-class TestMyViewFailureCondition(BaseTest):
+def test_list_view_response_body_includes_our_page(dummy_request):
+    """Test html contents in list view are the correct ones."""
+    from chelsea_pyramid_learning_journal.views.default import list_view
+    response = list_view(dummy_request)
+    the_tag = '<h1>Pyramid Learning Journal</h1>'
+    assert the_tag in response.ubody
 
-    def test_failing_view(self):
-        from .views.default import my_view
-        info = my_view(dummy_request(self.session))
-        self.assertEqual(info.status_int, 500)
+
+def test_detail_view_response_status_200_ok(dummy_request):
+    """Test detail view response status."""
+    from chelsea_pyramid_learning_journal.views.default import detail_view
+    response = detail_view(dummy_request)
+    assert response.status_code == 200
+
+
+def test_create_view_response_status_200_ok(dummy_request):
+    """Test list view."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    response = create_view(dummy_request)
+    assert response.status_code == 200
+
+
+def test_update_view_response_status_200_ok(dummy_request):
+    """Test list view."""
+    from chelsea_pyramid_learning_journal.views.default import update_view
+    response = update_view(dummy_request)
+    assert response.status_code == 200

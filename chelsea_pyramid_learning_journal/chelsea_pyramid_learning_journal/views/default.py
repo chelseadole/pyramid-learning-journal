@@ -3,40 +3,34 @@ import io  # for backwards compatability
 import os
 
 from pyramid.response import Response
+from pyramid.view import view_config
 
 HERE = os.path.dirname(__file__)
 
 
-def home_page(request):
+def list_vew(request):
     """Parse file path and pass it to response to serve home page."""
-    imported_text = io.open(os.path.join(HERE,
-                                         '../templates/homepage.html')).read()
-    return Response(imported_text)
+    path = os.path.join(HERE, '../templates/homepage.html')
+    with io.open(path) as file:
+        return Response(file.read())
 
 
-def list_view():  # list of journal entries
+def detail_vew(request):
     """Parse file path and pass it to response to serve home page."""
-    imported_text =\
-        io.open(os.path.join(HERE, '../templates/homepage.html')).read()
-    return Response(imported_text)
+    path = os.path.join(HERE, '../templates/detail-entry.html')
+    with io.open(path) as file:
+        return Response(file.read())
 
 
-def detail_view():  # view single entry
-    """Parse file path and pass it to response to serve detail post page."""
-    imported_text =\
-        io.open(os.path.join(HERE, '../templates/detail-entry.html')).read()
-    return Response(imported_text)
+def create_view(request):
+    """Parse file path and pass it to response to serve home page."""
+    path = os.path.join(HERE, '../templates/create-entry.html')
+    with io.open(path) as file:
+        return Response(file.read())
 
 
-def create_view():  # create new entry
-    """Parse file path and pass it to response to serve new post page."""
-    imported_text =\
-        io.open(os.path.join(HERE, '../templates/new-entry.html')).read()
-    return Response(imported_text)
-
-
-def update_view():  # edit existing entry
-    """Parse file path and pass it to response to serve edit post page."""
-    imported_text =\
-        io.open(os.path.join(HERE, '../templates/edit-entry.html')).read()
-    return Response(imported_text)
+def update_view(request):
+    """Parse file path and pass it to response to serve home page."""
+    path = os.path.join(HERE, '../templates/update-entry.html')
+    with io.open(path) as file:
+        return Response(file.read())
