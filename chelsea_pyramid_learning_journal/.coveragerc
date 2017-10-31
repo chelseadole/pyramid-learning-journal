@@ -1,0 +1,3 @@
+[run]
+source = chelsea_pyramid_learning_journal
+omit = chelsea_pyramid_learning_journal/test*
