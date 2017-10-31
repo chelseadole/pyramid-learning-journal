@@ -3,7 +3,6 @@ import io  # for backwards compatability
 import os
 
 from pyramid.response import Response
-from pyramid.view import view_config
 
 HERE = os.path.dirname(__file__)
 
