@@ -23,13 +23,13 @@ def detail_view(request):
 
 def create_view(request):
     """Parse file path and pass it to response to serve home page."""
-    path = os.path.join(HERE, '../templates/create-entry.html')
+    path = os.path.join(HERE, '../templates/new-entry.html')
     with io.open(path) as file:
         return Response(file.read())
 
 
 def update_view(request):
     """Parse file path and pass it to response to serve home page."""
-    path = os.path.join(HERE, '../templates/update-entry.html')
+    path = os.path.join(HERE, '../templates/edit-entry.html')
     with io.open(path) as file:
         return Response(file.read())
