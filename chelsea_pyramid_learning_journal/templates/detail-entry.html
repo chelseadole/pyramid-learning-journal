@@ -41,6 +41,7 @@
       </div>
     </nav>
 
+            {% block content %}
     <!-- Page Header -->
     <header class="masthead" style="background-image: url('../static/img/post-bg.jpg')">
       <div class="container">
@@ -62,14 +63,11 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
-            {% block content %}
-
-            {{ request.route_url('detail', id=expense.id) }}
-            <h4><a href="{{ request.route_url('detail_view', id=post.id }}">Edit Entry</a></h4><br>
-            {% for post in ljposts %}
-              {% if post.id == post.id %}
-                <p>{% post.body }</p>
-              {% endif %}
+            <h4><a href="{{ request.route_url('edit-entry', id=post.id }}">Edit Entry</a></h4><br>
+           <!--  {% for post in ljposts %}
+              {% if post.id == post.id %} -->
+                <p>{{ post.body }}</p>
+              <!-- {% endif %} -->
             {% endblock %}
 
           </div>
