@@ -58,39 +58,21 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
+          {% block content %}
+          {% for post in ljposts %}
           <div class="post-preview">
-            <a href="/journal/1">
+            <a href="/journal/{{ post.id }}">
               <h2 class="post-title">
                 Code 401, Day 01
               </h2>
             </a>
             <p class="post-meta">Posted by
               <a href="">Chelsea Dole</a>
-              on 10/16/2017</p>
+              on {{ post.creation_date }}</p>
           </div>
           <hr>
-          <div class="post-preview">
-            <a href="/journal/1">
-              <h2 class="post-title">
-                Code 401, Day 02
-              </h2>
-            </a>
-            <p class="post-meta">Posted by
-              <a href="">Chelsea Dole</a>
-              on 10/17/2017</p>
-          </div>
-          <hr>
-          <div class="post-preview">
-            <a href="/journal/1">
-              <h2 class="post-title">
-                Code 401, Day 03
-              </h2>
-            </a>
-            <p class="post-meta">Posted by
-              <a href="">Chelsea Dole</a>
-              on 10/18/2017</p>
-          </div>
-          <hr>
+          {% endfor %}
+          {% endblock %}
           <!-- Pager -->
           <div class="clearfix">
             <a class="btn btn-secondary float-right" href="#">Older Posts &rarr;</a>
