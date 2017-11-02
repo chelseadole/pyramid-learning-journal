@@ -1,4 +1,3 @@
-{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +12,7 @@
 
     <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='../static/https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
     <link href="../static/css/clean-blog.min.css" rel="stylesheet">
 
@@ -41,39 +40,46 @@
       </div>
     </nav>
 
-            {% block content %}
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('../static/img/post-bg.jpg')">
+    <header class="masthead" style="background-image: url('../static/img/home-bg.jpg')">
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
-            <div class="post-heading">
-              <h1>{{ post.title }}</h1>
-              <span class="meta">Posted by
-                <a href="#">Chelsea Dole</a>
-                on {{ post.creation_date }}</span>
+            <div class="site-heading">
+              <h1>Pyramid Learning Journal</h1>
+              <span class="subheading">Chelsea Dole</span>
             </div>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- Post Content -->
-    <article>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-10 mx-auto">
-            <h4><a href="{{ request.route_url('edit-entry', id=post.id }}">Edit Entry</a></h4><br>
-           <!--  {% for post in ljposts %}
-              {% if post.id == post.id %} -->
-                <p>{{ post.body }}</p>
-              <!-- {% endif %} -->
-            {% endblock %}
-
+    <!-- Main Content -->
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          {% block content %}
+          {% for post in ljposts %}
+          <div class="post-preview">
+            <a href="/journal/{{ post.id }}">
+              <h2 class="post-title">
+                {{ post.title }}
+              </h2>
+            </a>
+            <p class="post-meta">Posted by
+              <a href="">{{ post.author }}</a>
+              on {{ post.creation_date }}</p>
+          </div>
+          <hr>
+          {% endfor %}
+          {% endblock %}
+          <!-- Pager -->
+          <div class="clearfix">
+            <a class="btn btn-secondary float-right" href="#">Older Posts &rarr;</a>
           </div>
         </div>
       </div>
-    </article>
+    </div>
 
     <hr>
 
@@ -116,4 +122,3 @@
   </body>
 
 </html>
-{% endblock %}
