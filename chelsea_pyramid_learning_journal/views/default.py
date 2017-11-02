@@ -34,7 +34,8 @@ POST = [
 def list_view(request):
     """Parse file path and pass it to response to serve home page."""
     return {'ljposts': POST,
-            'title': 'Chelsea LJ'}
+            'title': 'Chelsea LJ',
+            'image': "home-bg.jpg"}
 
 
 @view_config(route_name='detail_view',
@@ -47,7 +48,8 @@ def detail_view(request):
     for post in POST:
         if post['id'] == post_id:
             return {'ljposts': post,
-                    'title': post.title}
+                    'title': post.title,
+                    'image': 'post-bg.jpg'}
     # target_post = list(filter(lambda x: x['id'] == post_id, POST))[0]
     # return {'ljposts': target_post}
 
@@ -57,7 +59,8 @@ def detail_view(request):
 def create_view(request):
     """Parse file path and pass it to response to serve home page."""
     # does anything go here??
-    return {'title': 'Create New Entry'}
+    return {'title': 'Create New Entry',
+            'image': 'new-entry.jpg'}
 
 
 @view_config(route_name='update_view',
@@ -72,4 +75,5 @@ def update_view(request):
     for post in POST:
         if post['id'] == post_id:
             return {'ljposts': post,
-                    'title': 'Update Entry'}
+                    'title': 'Update Entry',
+                    'image': 'post-bg.jpg'}
