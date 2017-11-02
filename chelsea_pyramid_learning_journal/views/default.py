@@ -33,7 +33,8 @@ POST = [
              renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
 def list_view(request):
     """Parse file path and pass it to response to serve home page."""
-    return {'ljposts': POST}
+    return {'ljposts': POST,
+            'title': 'Chelsea LJ'}
 
 
 @view_config(route_name='detail_view',
@@ -43,8 +44,12 @@ def detail_view(request):
     post_id = int(request.matchdict['id'])
     if post_id not in POST:
         return HTTPNotFound
-    target_post = list(filter(lambda x: x['id'] == post_id, POST))[0]
-    return {'ljposts': target_post}
+    for post in POST:
+        if post['id'] == post_id:
+            return {'ljposts': post,
+                    'title': post.title}
+    # target_post = list(filter(lambda x: x['id'] == post_id, POST))[0]
+    # return {'ljposts': target_post}
 
 
 @view_config(route_name='create_view',
@@ -52,7 +57,7 @@ def detail_view(request):
 def create_view(request):
     """Parse file path and pass it to response to serve home page."""
     # does anything go here??
-    return
+    return {'title': 'Create New Entry'}
 
 
 @view_config(route_name='update_view',
@@ -61,6 +66,10 @@ def update_view(request):
     """Parse file path and pass it to response to serve home page."""
     # get post ID from detail_view page... import it?
     # do same filter fn from detail_view
-    return {
-        'ljposts': target_post
-    }
+    post_id = int(request.matchdict['id'])
+    if post_id not in POST:
+        return HTTPNotFound
+    for post in POST:
+        if post['id'] == post_id:
+            return {'ljposts': post,
+                    'title': 'Update Entry'}
