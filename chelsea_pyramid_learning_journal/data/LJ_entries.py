@@ -83,7 +83,7 @@ POST = [
         "author": "Chelsea Dole",
         "creation_date": "10/18/2017",
         "title": "Day 03",
-        "body": "Kinley and I ran into a really annoying bug today with our project, but it was overall  a good day. Also I'm not a fan of this type of psuedocoding... I like typing out just straight up english, or essentially coding (with only a few comments for \"add shit here!\") — but this in between style is strange\r\n\r\nHowever, like I said, solid day :)"
+        "body": "Kinley and I ran into a really annoying bug today with our project, but it was overall  a good day. Also I'm not a fan of this type of psuedocoding... I like typing out just straight up english, or essentially coding, but this in between style is strange\r\n\r\nHowever, like I said, solid day :)"
     },
     {
         "id": 2,

@@ -1,0 +1,13 @@
+[run]
+source = chelsea_pyramid_learning_journal
+omit =
+    chelsea_pyramid_learning_journal/test*
+    chelsea_pyramid_learning_journal/__init__.py
+    chelsea_pyramid_learning_journal/models/__init__.py
+    chelsea_pyramid_learning_journal/models/meta.py
+    chelsea_pyramid_learning_journal/models/mymodel.py
+    chelsea_pyramid_learning_journal/scripts/__init__.py
+    chelsea_pyramid_learning_journal/scripts/initializedb.py
+
+[report]
+show_missing = True
