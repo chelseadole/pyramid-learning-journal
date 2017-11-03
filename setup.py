@@ -21,6 +21,7 @@ requires = [
     'transaction',
     'zope.sqlalchemy',
     'waitress',
+    'psycopg2',
 ]
 
 tests_require = [
@@ -41,8 +42,8 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
     ],
-    author='',
-    author_email='',
+    author='Chelsea Dole',
+    author_email='chelseadole@gmail.com',
     url='',
     keywords='web pyramid pylons',
     packages=find_packages(),
@@ -57,7 +58,7 @@ setup(
             'main = chelsea_pyramid_learning_journal:main',
         ],
         'console_scripts': [
-            'initialize_chelsea_pyramid_learning_journal_db = chelsea_pyramid_learning_journal.scripts.initializedb:main',
+            'initdb = chelsea_pyramid_learning_journal.scripts.initializedb:main',
         ],
     },
 )
