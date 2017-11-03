@@ -8,6 +8,7 @@ omit =
     chelsea_pyramid_learning_journal/models/mymodel.py
     chelsea_pyramid_learning_journal/scripts/__init__.py
     chelsea_pyramid_learning_journal/scripts/initializedb.py
+    chelsea_pyramid_learning_journal/routes.py
 
 [report]
 show_missing = True
