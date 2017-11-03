@@ -4,12 +4,17 @@
 #### Deployed URL: https://frightening-blood-49491.herokuapp.com/
 
 
+### Test Coverage (tox, test_pyramid.py):
+* *Python 2.7:* 92%
+* *Python 3.6:* 92%
+
+
 ### Project Description: 
 * The "Pyramid Learning Journal" site is a resource used by the author for posting, editing, and viewing learning journals written while attending Code Fellows' 401 Python course in Seattle, WA. This project is created using the Pyramid web framework for Python.
 
 ### Technologies/Resources:
 * Python
-* Pyramid (web framework)
+* Pyramid
 * HTML/CSS
 * Bootstrap (JS, jQuery, etc)
 
