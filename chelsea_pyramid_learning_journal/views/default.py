@@ -13,19 +13,19 @@ FMT = "%m/%d/%Y"
 POST = [
     {'creation_date': datetime.strptime('11/1/2017', FMT),
      'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': '1'},
+     'body': 'I am the baddest b!tch on the block.', 'id': 1},
     {'creation_date': datetime.strptime('11/1/2017', FMT),
      'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': '2'},
+     'body': 'I am the baddest b!tch on the block.', 'id': 2},
     {'creation_date': datetime.strptime('11/1/2017', FMT),
      'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': '3'},
+     'body': 'I am the baddest b!tch on the block.', 'id': 3},
     {'creation_date': datetime.strptime('11/1/2017', FMT),
      'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': '4'},
+     'body': 'I am the baddest b!tch on the block.', 'id': 4},
     {'creation_date': datetime.strptime('11/1/2017', FMT),
      'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': '5'}
+     'body': 'I am the baddest b!tch on the block.', 'id': 5}
 ]
 
 
@@ -43,16 +43,15 @@ def list_view(request):
 def detail_view(request):
     """Parse file path and pass it to response to serve home page."""
     post_id = int(request.matchdict['id'])
-    if post_id not in POST:
-        return HTTPNotFound
+    # if post_id not in POST:
+    print(post_id)
     for post in POST:
         if post['id'] == post_id:
-            return {'ljposts': post,
+            return {'ljpost': post,
                     'title': post.title,
                     'image': 'post-bg.jpg'}
-    # target_post = list(filter(lambda x: x['id'] == post_id, POST))[0]
-    # return {'ljposts': target_post}
 
+    raise HTTPNotFound
 
 @view_config(route_name='create_view',
              renderer='chelsea_pyramid_learning_journal:templates/new-entry.jinja2')
