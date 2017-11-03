@@ -1,0 +1,20 @@
+{% extends "layout.jinja2" %}
+{% block content %}
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <form>
+                <p>Title:</p>
+                <input type="text" value="{{ ljpost.title }}">
+                <p>Body:</p>
+                <textarea style="width: 100%;" type="text">{{ ljpost.body }}</textarea>
+                <br><br>
+                <input type="submit" name="Submit">
+            </form>
+          <hr>
+          <!-- Pager -->
+        </div>
+      </div>
+    </div>
+{% endblock %}
