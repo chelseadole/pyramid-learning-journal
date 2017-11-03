@@ -48,3 +48,11 @@ def test_detail_view_has_correct_keys(dummy_request):
     assert 'image' in response
     assert 'ljpost' in response
     assert 'image' in response
+
+
+def test_http_not_found(dummy_request):
+    """Test that response to detail_view has the correct keys."""
+    from chelsea_pyramid_learning_journal.views.default import detail_view
+    dummy_request.matchdict['id'] = 1
+    with pytest.raises(HTTPNotFound):
+        assert detail_view(dummy_request)
