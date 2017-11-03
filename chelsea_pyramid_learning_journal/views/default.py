@@ -1,5 +1,6 @@
 """Create callables for calling routes."""
 from pyramid.view import view_config
+from datetime import datetime
 from pyramid.httpexceptions import HTTPNotFound
 from chelsea_pyramid_learning_journal.data.LJ_entries import POST
 
@@ -47,8 +48,7 @@ def update_view(request):
     post_id = int(request.matchdict['id'])
     for post in POST:
         if post['id'] == post_id:
-            return {'ljpost': post['body'],
-                    'title': post['title'],
+            return {'ljpost': post,
                     'image': 'post-bg.jpg'}
 
     raise HTTPNotFound
