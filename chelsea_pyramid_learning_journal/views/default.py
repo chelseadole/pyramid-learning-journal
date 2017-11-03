@@ -1,27 +1,9 @@
 """Create callables for calling routes."""
 from pyramid.view import view_config
-from datetime import datetime
 from pyramid.httpexceptions import HTTPNotFound
+from chelsea_pyramid_learning_journal.data.LJ_entries import POST
 
 FMT = "%m/%d/%Y"
-
-POST = [
-    {'creation_date': datetime.strptime('11/1/2017', FMT),
-     'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': 1},
-    {'creation_date': datetime.strptime('11/1/2017', FMT),
-     'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': 2},
-    {'creation_date': datetime.strptime('11/1/2017', FMT),
-     'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': 3},
-    {'creation_date': datetime.strptime('11/1/2017', FMT),
-     'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': 4},
-    {'creation_date': datetime.strptime('11/1/2017', FMT),
-     'title': 'LJ1', 'author': 'Chelsea Mother-Effin Dole',
-     'body': 'I am the baddest b!tch on the block.', 'id': 5}
-]
 
 
 @view_config(route_name='list_view',
