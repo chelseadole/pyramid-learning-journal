@@ -11,12 +11,12 @@
           <div class="post-preview">
             <a href="/journal/{{ post.id }}">
               <h2 class="post-title">
-                {{ post.title }}
+                {{ post[title] }}
               </h2>
             </a>
             <p class="post-meta">Posted by
-              <a href="">{{ post.author }}</a>
-              on {{ post.creation_date }}</p>
+              <a href="">{{ post[author] }}</a>
+              on {{ post[creation_date] }}</p>
           </div>
           <hr>
           {% endfor %}
