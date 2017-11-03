@@ -1,18 +1,24 @@
+"""Creating Journal class to create database entries."""
+
 from sqlalchemy import (
     Column,
-    Index,
     Integer,
-    Text,
+    Unicode,
 )
 
 from .meta import Base
 
 
-class MyModel(Base):
-    __tablename__ = 'models'
+class Journal(Base):
+    """Describing properties of each LJ entry in DB."""
+
+    __tablename__ = 'learning_journals'
     id = Column(Integer, primary_key=True)
-    name = Column(Text)
-    value = Column(Integer)
+    author = Column(Unicode)
+    creation_date = Column(Unicode)
+    title = Column(Unicode)
+    body = Column(Unicode)
 
-
-Index('my_index', MyModel.name, unique=True, mysql_length=255)
+    def __repr__(self):
+        """Return LJ id."""
+        return '<LJ ID: {}>'.format(self.id)
