@@ -2,6 +2,7 @@
 from pyramid.view import view_config
 from chelsea_pyramid_learning_journal.models import Journal
 from pyramid.httpexceptions import HTTPNotFound
+from chelsea_pyramid_learning_journal.data.LJ_entries import POST
 
 
 @view_config(route_name='list_view',
@@ -9,6 +10,8 @@ from pyramid.httpexceptions import HTTPNotFound
 def list_view(request):
     """Parse file path and pass it to response to serve home page."""
     posts = request.dbsession.query(Journal).all()
+    if posts is None:
+        raise HTTPNotFound
     return {'ljposts': posts,
             'title': 'Chelsea LJ',
             'image': "home-bg.jpg"}
@@ -19,14 +22,12 @@ def list_view(request):
 def detail_view(request):
     """Parse file path and pass it to response to serve home page."""
     post_id = int(request.matchdict['id'])
-    posts = request.dbsession.query(Journal).get(post_id)
-    for post in posts:
-        if post['id'] == post_id:
-            return {'ljpost': post,
-                    'title': post['title'],
-                    'image': 'post-bg.jpg'}
-
-    raise HTTPNotFound
+    post = request.dbsession.query(Journal).get(post_id)
+    if post is None:
+        raise HTTPNotFound
+    return {'ljpost': post,
+            'title': post.title,
+            'image': 'post-bg.jpg'}
 
 
 @view_config(route_name='create_view',
