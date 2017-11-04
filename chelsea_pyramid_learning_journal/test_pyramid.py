@@ -59,23 +59,21 @@ def test_list_view_response_has_image(dummy_request):
     assert response['title'] == 'Create New Entry'
 
 
-def test_detail_view_only_shows_one_and_is_added_to_db(dummy_request):
-    """Item can be added to DB, and show in detail_view individually."""
-    from chelsea_pyramid_learning_journal.views.default import detail_view
+def test_journal_is_added_to_db(db_session):
+    """Journal can be added to DB."""
     assert len(db_session.query(Journal).all()) == 0
-    new_journal = Journal(
-        author='Chelsea Dole',
-        creation_date='11/02/2017',
-        title='Day 400',
-        body='Harry Potter and the Goblet of Fire'
+    ex_journal = Journal(
+        title='Harry Potter and the Chamber of Secrets',
+        creation_date='11/13/2017',
+        body='Today I fought a snake',
+        author='Chelsea Dole'
     )
-    dummy_request.dbsession.add(new_journal)
-    dummy_request.dbsession.commit()
+    db_session.add(ex_journal)
     assert len(db_session.query(Journal).all()) == 1
 
 
-def test_journal_exists_and_is_in_list(dummy_request):
-    """Test interaction with DB."""
+def test_created_journal_in_db_is_a_dict(dummy_request):
+    """Test that newly added Journal is a dictionary."""
     from chelsea_pyramid_learning_journal.views.default import list_view
     new_journal = Journal(
         author='Chelsea Dole',
@@ -89,17 +87,33 @@ def test_journal_exists_and_is_in_list(dummy_request):
     assert isinstance(response, dict)
 
 
-def test_detail_view_non_existent_expense(dummy_request):
+def test_detail_view_non_existent_journal(dummy_request):
     """View detail with HTTPNotFound response."""
     from chelsea_pyramid_learning_journal.views.default import detail_view
-    new_expense = Journal(
+    new_entry = Journal(
         author='Chelsea Dole',
         creation_date='11/02/2017',
         title='Day 400',
         body='Harry Potter and the Chamber of Secrets'
     )
-    dummy_request.dbsession.add(new_expense)
+    dummy_request.dbsession.add(new_entry)
     dummy_request.dbsession.commit()
     dummy_request.matchdict['id'] = 2000
     with pytest.raises(HTTPNotFound):
         detail_view(dummy_request)
+
+
+def test_create_view_still_works(dummy_request):
+    """Test that create_view still works despite changes to other fns."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    new_entry = Journal(
+        author='Chelsea Dole',
+        creation_date='11/30/2017',
+        title='Hogwarts Year 5',
+        body='Harry Potter and the Order of the Phoenix',
+    )
+    dummy_request.dbsession.add(new_entry)
+    dummy_request.dbsession.commit()
+    dummy_request.matchdict['id'] = 5
+    response = create_view(new_entry)
+    assert response['title'] == 'Create New Entry'
