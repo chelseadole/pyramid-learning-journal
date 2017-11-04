@@ -1,14 +1,15 @@
 """Create callables for calling routes."""
 from pyramid.view import view_config
+from chelsea_pyramid_learning_journal.models import Journal
 from pyramid.httpexceptions import HTTPNotFound
-from chelsea_pyramid_learning_journal.data.LJ_entries import POST
 
 
 @view_config(route_name='list_view',
              renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
 def list_view(request):
     """Parse file path and pass it to response to serve home page."""
-    return {'ljposts': POST,
+    posts = request.dbsession.query(Journal).all()
+    return {'ljposts': posts,
             'title': 'Chelsea LJ',
             'image': "home-bg.jpg"}
 
@@ -18,7 +19,8 @@ def list_view(request):
 def detail_view(request):
     """Parse file path and pass it to response to serve home page."""
     post_id = int(request.matchdict['id'])
-    for post in POST:
+    posts = request.dbsession.query(Journal).get(post_id)
+    for post in posts:
         if post['id'] == post_id:
             return {'ljpost': post,
                     'title': post['title'],
