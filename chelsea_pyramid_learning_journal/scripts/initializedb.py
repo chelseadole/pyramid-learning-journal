@@ -19,7 +19,7 @@ from ..models import (
     get_tm_session,
 )
 
-from ..models import MyModel
+from ..models.mymodel import Journal
 
 
 def usage(argv):
@@ -49,5 +49,8 @@ def main(argv=sys.argv):
 
         db_entries = []
         for entry in POST:
-            db_entries.append(MyModel(id=entry[id], author=entry[author], creation_date=entry[creation_date], title=entry[title], body=entry[body]))
-        dbsession.add(db_entries)
+            db_entries.append(Journal(author=entry["author"],
+                                      creation_date=entry["creation_date"],
+                                      title=entry["title"],
+                                      body=entry["body"]))
+        dbsession.add_all(db_entries)
