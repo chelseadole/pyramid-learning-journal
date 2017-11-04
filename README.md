@@ -4,9 +4,12 @@
 #### Deployed URL: https://frightening-blood-49491.herokuapp.com/
 
 
-### Test Coverage (tox, test_pyramid.py):
+### Test Coverage Step 2 (tox, test_pyramid.py):
 * *Python 2.7:* 92%
 * *Python 3.6:* 92%
+
+### Test Coverage Step 3 (tox, test_pyramid.py):
+* *Problem with tox, unable to run, despite pytest working 100% well. (Hoping to resubmit.)*
 
 
 ### Project Description: 
