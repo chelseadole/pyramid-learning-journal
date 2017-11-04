@@ -58,7 +58,7 @@ setup(
             'main = chelsea_pyramid_learning_journal:main',
         ],
         'console_scripts': [
-            'initdb = chelsea_pyramid_learning_journal.scripts.initializedb:main',
+            'initializedb = chelsea_pyramid_learning_journal.scripts.initializedb:main',
         ],
     },
 )
