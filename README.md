@@ -24,15 +24,15 @@
 ### Routes:
 
 * / - the home page and a list of all LJ posts
-* /expense/{id:\d+} - the view to see the detail of a single LJ post
-* /expense//journal/new-entry - for adding new LJ posts
-* /expense/journal/{id:\d+}/edit-entry - for editing previously created LJ posts
+* /journal/{id:\d+} - the view to see the detail of a single LJ post
+* /journal/new-entry - for adding new LJ posts
+* /journal/{id:\d+}/edit-entry - for editing previously created LJ posts
 
 ### Set Up and Installation:
 
 * Clone this repository to your local machine.
 
-* Once downloaded, cd into the expense_tracker directory.
+* Once downloaded, cd into the chelsea_pyramid_learning_journal directory.
 
 * Begin a new virtual environment with Python 3 and activate it.
 
@@ -40,7 +40,7 @@
 
 * pip install this package as well as the testing set of extras into your virtual environment.
 
-* $ initialize_db development.ini to initialize the database, populating with random models.
+* $ initialize_db development.ini to initialize the database
 
 * $ pserve development.ini --reload to serve the application on http://localhost:6543
 
