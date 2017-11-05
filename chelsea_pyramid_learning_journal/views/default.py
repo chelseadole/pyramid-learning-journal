@@ -9,7 +9,7 @@ from datetime import datetime
 @view_config(route_name='list_view',
              renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
 def list_view(request):
-    """Parse file path and pass it to response to serve home page."""
+    """Show homepage with all listed posts."""
     posts = request.dbsession.query(Journal).all()
     if posts is None:
         raise HTTPNotFound
@@ -21,7 +21,7 @@ def list_view(request):
 @view_config(route_name='detail_view',
              renderer='chelsea_pyramid_learning_journal:templates/detail-entry.jinja2')
 def detail_view(request):
-    """Parse file path and pass it to response to serve home page."""
+    """Show detailed post page, and give option to update post contents."""
     post_id = int(request.matchdict['id'])
     post = request.dbsession.query(Journal).get(post_id)
     if post is None:
@@ -34,7 +34,7 @@ def detail_view(request):
 @view_config(route_name='create_view',
              renderer='chelsea_pyramid_learning_journal:templates/new-entry.jinja2')
 def create_view(request):
-    """Parse file path and pass it to response to serve home page."""
+    """Show create post page, and process POST request to add new journal to DB."""
     if request.method == 'GET':
         return {'title': 'Create New Entry',
                 'image': 'new-entry.jpg'}
@@ -55,12 +55,18 @@ def create_view(request):
 @view_config(route_name='update_view',
              renderer='chelsea_pyramid_learning_journal:templates/edit-entry.jinja2')
 def update_view(request):
-    """Parse file path and pass it to response to serve home page."""
+    """Show update post page, and process POST request to update database."""
     post_id = int(request.matchdict['id'])
-    for post in POST:
-        if post['id'] == post_id:
-            return {'ljpost': post,
-                    'image': 'post-bg.jpg',
-                    'title': 'Edit Entry'}
-
-    raise HTTPNotFound
+    target_journal = request.dbsession.query(Journal).get(post_id)
+    if not target_journal:
+        raise HTTPFound
+    if request.method == "GET":
+        return {'ljpost': target_journal,
+                'image': 'post-bg.jpg',
+                'title': 'Edit Entry'}
+    if request.method == "POST":
+        target_journal.body = request.POST['body']
+        target_journal.title = request.POST['title']
+        request.dbsession.add(target_journal)
+        request.dbsession.flush()
+        return HTTPFound(request.route_url('detail_view', id=target_journal.id)
