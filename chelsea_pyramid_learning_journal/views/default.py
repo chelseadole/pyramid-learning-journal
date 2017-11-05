@@ -1,8 +1,9 @@
 """Create callables for calling routes."""
 from pyramid.view import view_config
 from chelsea_pyramid_learning_journal.models import Journal
-from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPBadRequest, HTTPFound
 from chelsea_pyramid_learning_journal.data.LJ_entries import POST
+from datetime import datetime
 
 
 @view_config(route_name='list_view',
@@ -34,8 +35,21 @@ def detail_view(request):
              renderer='chelsea_pyramid_learning_journal:templates/new-entry.jinja2')
 def create_view(request):
     """Parse file path and pass it to response to serve home page."""
-    return {'title': 'Create New Entry',
-            'image': 'new-entry.jpg'}
+    if request.method == 'GET':
+        return {'title': 'Create New Entry',
+                'image': 'new-entry.jpg'}
+    if request.method == 'POST':
+        now = str(datetime.now())[:10]
+        if not request.POST.body or not request.POST.title:
+            raise HTTPBadRequest
+        new_entry = Journal(
+            title=request.POST['title'],
+            body=request.POST['body'],
+            due_date=now,
+            author='Chelsea Dole'
+        )
+        request.dbsession.add(new_entry)
+        return HTTPFound(request.route_url('list_view'))
 
 
 @view_config(route_name='update_view',
