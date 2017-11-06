@@ -2,7 +2,6 @@
 from pyramid.view import view_config
 from chelsea_pyramid_learning_journal.models import Journal
 from pyramid.httpexceptions import HTTPNotFound, HTTPBadRequest, HTTPFound
-from chelsea_pyramid_learning_journal.data.LJ_entries import POST
 from datetime import datetime
 
 
@@ -69,4 +68,4 @@ def update_view(request):
         target_journal.title = request.POST['title']
         request.dbsession.add(target_journal)
         request.dbsession.flush()
-        return HTTPFound(request.route_url('detail_view', id=target_journal.id)
+        return HTTPFound(request.route_url('detail_view', id=target_journal.id))

@@ -115,5 +115,5 @@ def test_create_view_still_works(dummy_request):
     dummy_request.dbsession.add(new_entry)
     dummy_request.dbsession.commit()
     dummy_request.matchdict['id'] = 5
-    response = create_view(new_entry)
+    response = create_view(dummy_request)
     assert response['title'] == 'Create New Entry'
