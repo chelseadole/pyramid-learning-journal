@@ -1,5 +1,4 @@
 beautifulsoup4==4.6.0
--e git+https://github.com/chelseadole/pyramid-learning-journal.git@5be5f4b6c90d4d659b6004be071d8be56470a6f5#egg=chelsea_pyramid_learning_journal
 coverage==4.4.1
 hupper==1.0
 Jinja2==2.9.6
