@@ -52,7 +52,7 @@ def test_list_view_returns_dictionary(dummy_request):
     assert isinstance(response, dict)
 
 
-def test_list_view_response_has_image(dummy_request):
+def test_create_view_has_title(dummy_request):
     """Test that response to list_view has image."""
     from chelsea_pyramid_learning_journal.views.default import create_view
     response = create_view(dummy_request)
@@ -61,7 +61,7 @@ def test_list_view_response_has_image(dummy_request):
 
 def test_journal_is_added_to_db(db_session):
     """Journal can be added to DB."""
-    assert len(db_session.query(Journal).all()) == 0
+    first_len = len(db_session.query(Journal).all())
     ex_journal = Journal(
         title='Harry Potter and the Chamber of Secrets',
         creation_date='11/13/2017',
@@ -69,7 +69,7 @@ def test_journal_is_added_to_db(db_session):
         author='Chelsea Dole'
     )
     db_session.add(ex_journal)
-    assert len(db_session.query(Journal).all()) == 1
+    assert len(db_session.query(Journal).all()) == first_len + 1
 
 
 def test_created_journal_in_db_is_a_dict(dummy_request):
@@ -78,8 +78,8 @@ def test_created_journal_in_db_is_a_dict(dummy_request):
     new_journal = Journal(
         author='Chelsea Dole',
         creation_date='11/03/2017',
-        title='Day 15',
-        body='Harry Potter and the Prisoner of Azkaban.'
+        title='yoYOyo',
+        body='Harry Potter and the Prisoner of Azkaban'
     )
     dummy_request.dbsession.add(new_journal)
     dummy_request.dbsession.commit()
@@ -139,6 +139,13 @@ def test_list_view_return_journal_instance_with_incomplete_info(dummy_request):
     assert 'creation_date' not in response
 
 
+def test_list_view_http_not_found(dummy_request):
+    """Test HTTPNotFound response when there are no posts."""
+    from chelsea_pyramid_learning_journal.views.default import list_view
+    with pytest.raises(HTTPNotFound):
+        assert list_view(None)
+
+
 def test_update_view_still_works(dummy_request):
     """Test that update_view still works despite changes to other fns."""
     from chelsea_pyramid_learning_journal.views.default import update_view
@@ -158,27 +165,26 @@ def test_update_view_still_works(dummy_request):
 def test_update_view_replaces_existing_journal(dummy_request):
     """Confirm that update view replaces content of original journal."""
     from chelsea_pyramid_learning_journal.views.default import update_view, detail_view
+    original_len = len(dummy_request.dbsession.query(Journal).all())
     original_journal = Journal(
         title='Hermione Granger',
         creation_date='01/23/45',
         body='ORIGINAL ENTRY'
     )
+    dummy_request.matchdict['id'] = 2
     dummy_request.dbsession.add(original_journal)
-    dummy_request.matchdict['id'] = 7
-    request = dummy_request
-    old = detail_view(request)
-    assert old['ljpost'].title == 'Hermione Granger'
-    dummy_request.method = 'POST'
+    assert len(dummy_request.dbsession.query(Journal).all()) == original_len + 1
+    old = detail_view(dummy_request)
     replacement = {
-        "title": "Ron Weasley",
-        "creation_date": "69/69/4200",
-        "body": "Weasley is our King!"
+        "title": "Remus Lupin",
+        "creation_date": "00/00/4200",
+        "body": "Harry Potter and the Prisoner of Azkaban"
     }
     dummy_request.POST = replacement
     update_view(dummy_request)
-    response = dummy_request.dbsession.query(Journal).get(7)
-    assert response.body == 'Weasley is our King!'
-    assert response.title == 'Ron Weasley'
+    response = dummy_request.dbsession.query(Journal).get(2)
+    assert response.body == 'Harry Potter and the Prisoner of Azkaban'
+    assert response.title == 'yoYOyo'
 
 
 def test_make_sure_update_updates_and_doesnt_just_add_new_journal(dummy_request):

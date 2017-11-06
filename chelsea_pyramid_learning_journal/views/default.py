@@ -9,9 +9,9 @@ from datetime import datetime
              renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
 def list_view(request):
     """Show homepage with all listed posts."""
-    posts = request.dbsession.query(Journal).all()
-    if posts is None:
+    if request is None:
         raise HTTPNotFound
+    posts = request.dbsession.query(Journal).all()
     return {'ljposts': posts,
             'title': 'Chelsea LJ',
             'image': "home-bg.jpg"}
@@ -37,10 +37,8 @@ def create_view(request):
     if request.method == 'GET':
         return {'title': 'Create New Entry',
                 'image': 'new-entry.jpg'}
-    if request.method == 'POST':
+    if request.method == 'POST' and request.POST:
         now = str(datetime.now())[:10]
-        if not request.POST.body or not request.POST.title:
-            raise HTTPBadRequest
         new_entry = Journal(
             title=request.POST['title'],
             body=request.POST['body'],
@@ -48,7 +46,8 @@ def create_view(request):
             author='Chelsea Dole'
         )
         request.dbsession.add(new_entry)
-        return HTTPFound(request.route_url('list_view'))
+        raise HTTPFound(request.route_url('list_view'))
+    return {}
 
 
 @view_config(route_name='update_view',
@@ -58,7 +57,7 @@ def update_view(request):
     post_id = int(request.matchdict['id'])
     target_journal = request.dbsession.query(Journal).get(post_id)
     if not target_journal:
-        raise HTTPFound
+        raise HTTPNotFound
     if request.method == "GET":
         return {'ljpost': target_journal,
                 'image': 'post-bg.jpg',
