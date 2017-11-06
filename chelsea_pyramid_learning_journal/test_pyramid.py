@@ -155,51 +155,50 @@ def test_update_view_still_works(dummy_request):
     assert response['title'] == 'Edit Entry'
 
 
-# def test_update_view_replaces_existing_journal(dummy_request):
-#     """Confirm that update view replaces content of original journal."""
-#     from chelsea_pyramid_learning_journal.views.default import update_view, detail_view
-#     original_journal = Journal(
-#         title='Hermione Granger',
-#         creation_date='01/23/45',
-#         body='ORIGINAL ENTRY'
-#     )
-#     dummy_request.dbsession.add(original_journal)
-#     dummy_request.matchdict['id'] = 50
-#     request = dummy_request
-#     old = detail_view(request)
-#     assert old['ljpost'].title == 'Hermione Granger'
-#     dummy_request.method = 'POST'
-#     replacement = {
-#         "title": 'Ron Weasley',
-#         "creation_date": '69/69/420',
-#         "body": 'Weasley is our King!'
-#     }
-#     dummy_request.POST = replacement
-#     update_view(dummy_request)
-#     response = dummy_request.dbsession.query(Journal).get(50)
-#     assert response.creation_date == '69/69/420'
-#     assert response.body == 'Weasley is our King!'
-#     assert response.title == 'Ron Weasley'
+def test_update_view_replaces_existing_journal(dummy_request):
+    """Confirm that update view replaces content of original journal."""
+    from chelsea_pyramid_learning_journal.views.default import update_view, detail_view
+    original_journal = Journal(
+        title='Hermione Granger',
+        creation_date='01/23/45',
+        body='ORIGINAL ENTRY'
+    )
+    dummy_request.dbsession.add(original_journal)
+    dummy_request.matchdict['id'] = 7
+    request = dummy_request
+    old = detail_view(request)
+    assert old['ljpost'].title == 'Hermione Granger'
+    dummy_request.method = 'POST'
+    replacement = {
+        "title": "Ron Weasley",
+        "creation_date": "69/69/4200",
+        "body": "Weasley is our King!"
+    }
+    dummy_request.POST = replacement
+    update_view(dummy_request)
+    response = dummy_request.dbsession.query(Journal).get(7)
+    assert response.body == 'Weasley is our King!'
+    assert response.title == 'Ron Weasley'
 
 
-# def test_make_sure_update_updates_and_doesnt_just_add_new_journal(dummy_request):
-#     """Make sure that DB length doesnt change when updating."""
-#     from chelsea_pyramid_learning_journal.views.default import update_view, detail_view
-#     assert len(dummy_request.dbsession.query(Journal).all()) == 0
-#     original_journal = Journal(
-#         title='Sirius Black',
-#         creation_date='11/11/1111',
-#         body='I did my time. 12 year of it! In AZKABAN'
-#     )
-#     dummy_request.dbsession.add(original_journal)
-#     dummy_request.matchdict['id'] = 1
-#     assert len(dummy_request.dbsession.query(Journal).all()) == 1
-#     dummy_request.method = 'POST'
-#     update_entry = {
-#         "title": 'Remus Lupin',
-#         "creation_date": '99/99/99',
-#         "body": 'Awoooooo'
-#     }
-#     dummy_request.POST = update_entry
-#     update_view(dummy_request)
-#     assert len(dummy_request.dbsession.query(Journal).all()) == 1
+def test_make_sure_update_updates_and_doesnt_just_add_new_journal(dummy_request):
+    """Make sure that DB length doesnt change when updating."""
+    from chelsea_pyramid_learning_journal.views.default import update_view, detail_view
+    original_len = len(dummy_request.dbsession.query(Journal).all())
+    original_journal = Journal(
+        title='Sirius Black',
+        creation_date='11/11/1111',
+        body='I did my time. 12 year of it! In AZKABAN'
+    )
+    dummy_request.dbsession.add(original_journal)
+    dummy_request.matchdict['id'] = 1
+    assert len(dummy_request.dbsession.query(Journal).all()) == original_len + 1
+    dummy_request.method = 'POST'
+    update_entry = {
+        "title": 'Remus Lupin',
+        "creation_date": '99/99/99',
+        "body": 'Awoooooo'
+    }
+    dummy_request.POST = update_entry
+    update_view(dummy_request)
+    assert len(dummy_request.dbsession.query(Journal).all()) == original_len + 1
