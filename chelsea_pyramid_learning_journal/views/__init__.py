@@ -3,4 +3,4 @@
 
 def includeme(config):
     """."""
-    pass
+    pass  # pragma: no cover

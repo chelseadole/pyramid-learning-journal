@@ -117,3 +117,25 @@ def test_create_view_still_works(dummy_request):
     dummy_request.matchdict['id'] = 5
     response = create_view(new_entry)
     assert response['title'] == 'Create New Entry'
+
+
+def test_list_view_return_journal_instance_with_incomplete_info(dummy_request):
+    """Update view response has file content."""
+    from chelsea_pyramid_learning_journal.views.default import list_view
+    new_journal = Journal(
+        title='this is an incomplete entry',
+    )
+    dummy_request.dbsession.add(new_journal)
+    request = dummy_request
+    response = list_view(request)
+    assert 'creation_date' not in response
+
+
+def test_update_view_items_are_still_in_place(dummy_request):
+    """Update view response still has some items."""
+    from chelsea_pyramid_learning_journal.views.default import update_view
+    dummy_request.matchdict['id'] = 6
+    response = update_view(dummy_request)
+    assert 'image' in response
+    assert 'title' in response
+    assert 'ljpost' in response

@@ -2,6 +2,7 @@
 ### Code Fellows, Python 401
 #### Author: Chelsea Dole
 #### Deployed URL: https://frightening-blood-49491.herokuapp.com/
+#### Version: 1.0
 
 
 ### Test Coverage Step 2 (tox, test_pyramid.py):
