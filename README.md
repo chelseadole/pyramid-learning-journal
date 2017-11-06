@@ -9,8 +9,12 @@
 * *Python 3.6:* 92%
 
 ### Test Coverage Step 3 (tox, test_pyramid.py):
-* *Problem with tox, unable to run, despite pytest working 100% well. (Hoping to resubmit.)*
+* *Python 3.6:* 92%
+* *Python 2.7:* Problem with tox, unable to run.
 
+### Test Coverage Step 4 (tox, test_pyramid.py)
+* *Python 3.6:* 82%
+* *Python 2.7:* Problem with tox, unable to run.
 
 ### Project Description: 
 * The "Pyramid Learning Journal" site is a resource used by the author for posting, editing, and viewing learning journals written while attending Code Fellows' 401 Python course in Seattle, WA. This project is created using the Pyramid web framework for Python.

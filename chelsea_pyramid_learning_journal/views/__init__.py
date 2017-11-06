@@ -1,6 +1,6 @@
 """."""
 
 
-def includeme(config):
+def includeme(config):  # pragma: no cover
     """."""
-    pass
+    return  # pragma: no cover
