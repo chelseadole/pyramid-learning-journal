@@ -1,7 +1,7 @@
 """Create callables for calling routes."""
 from pyramid.view import view_config
 from chelsea_pyramid_learning_journal.models import Journal
-from pyramid.httpexceptions import HTTPNotFound, HTTPBadRequest, HTTPFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from datetime import datetime
 
 
@@ -42,11 +42,11 @@ def create_view(request):
         new_entry = Journal(
             title=request.POST['title'],
             body=request.POST['body'],
-            due_date=now,
+            creation_date=now,
             author='Chelsea Dole'
         )
         request.dbsession.add(new_entry)
-        raise HTTPFound(request.route_url('list_view'))
+        return HTTPFound(request.route_url('list_view'))
     return {}
 
 
@@ -67,4 +67,4 @@ def update_view(request):
         target_journal.title = request.POST['title']
         request.dbsession.add(target_journal)
         request.dbsession.flush()
-        return HTTPFound(request.route_url('detail_view', id=target_journal.id))
+        return HTTPFound(request.route_url('detail_view', id=post_id))
