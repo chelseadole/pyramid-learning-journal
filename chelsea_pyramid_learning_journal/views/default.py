@@ -105,7 +105,7 @@ def login(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
-        if is_authenticated(username, password):
+        if is_authorized(username, password):
             headers = remember(request, username)
             return HTTPFound(request.route_url('list_view'), headers=headers)
 
