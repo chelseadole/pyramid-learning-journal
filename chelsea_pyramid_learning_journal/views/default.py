@@ -11,9 +11,9 @@ from chelsea_pyramid_learning_journal.security import is_authorized
              renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
 def list_view(request):
     """Show homepage with all listed posts."""
-    if request is None:
-        raise HTTPNotFound
     initial_lst = request.dbsession.query(Journal).all()
+    if not initial_lst:
+        raise HTTPNotFound
     posts = sorted(initial_lst, key=lambda e: e.creation_date, reverse=True)
     return {'ljposts': posts,
             'title': 'Learning Journal',
