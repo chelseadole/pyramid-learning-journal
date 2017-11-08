@@ -16,7 +16,8 @@ def list_view(request):
     initial_lst = request.dbsession.query(Journal).all()
     posts = sorted(initial_lst, key=lambda e: e.creation_date, reverse=True)
     return {'ljposts': posts,
-            'title': 'Chelsea LJ',
+            'title': 'Learning Journal',
+            'subhead': 'Chelsea Dole',
             'image': "home-bg.jpg"}
 
 
