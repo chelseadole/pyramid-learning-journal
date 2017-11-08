@@ -58,15 +58,17 @@ def update_view(request):
     """Show update post page, and process POST request to update database."""
     post_id = int(request.matchdict['id'])
     target_journal = request.dbsession.query(Journal).get(post_id)
-    if not target_journal:
-        raise HTTPNotFound
-    if request.method == "GET":
-        return {'ljpost': target_journal,
-                'image': 'post-bg.jpg',
-                'title': 'Edit Entry'}
-    if request.method == "POST":
-        target_journal.body = request.POST['body']
-        target_journal.title = request.POST['title']
-        request.dbsession.add(target_journal)
-        request.dbsession.flush()
-        return HTTPFound(request.route_url('detail_view', id=post_id))
+    print(target_journal)
+    try:
+        if request.method == "GET":
+            return {'ljpost': target_journal,
+                    'image': 'post-bg.jpg',
+                    'title': 'Edit Entry'}
+        if request.method == "POST":
+            target_journal.body = request.POST['body']
+            target_journal.title = request.POST['title']
+            request.dbsession.add(target_journal)
+            request.dbsession.flush()
+            return HTTPFound(request.route_url('detail_view', id=post_id))
+    except AttributeError:
+        return HTTPNotFound

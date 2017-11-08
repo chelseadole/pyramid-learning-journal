@@ -4,10 +4,10 @@ import pytest
 from pyramid import testing
 from chelsea_pyramid_learning_journal.models.mymodel import Journal
 from chelsea_pyramid_learning_journal.models.meta import Base
-from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def configuration(request):
     """Set up a Configurator instance."""
     config = testing.setUp(settings={
@@ -23,7 +23,7 @@ def configuration(request):
     return config
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def db_session(configuration, request):
     """Create a session for interacting with the test database."""
     SessionFactory = configuration.registry["dbsession_factory"]
@@ -39,7 +39,7 @@ def db_session(configuration, request):
     return session
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def dummy_request(db_session):
     """Instantiate a fake HTTP Request with a database session."""
     return testing.DummyRequest(dbsession=db_session)
@@ -149,52 +149,111 @@ def test_list_view_http_not_found(dummy_request):
 def test_update_view_still_works(dummy_request):
     """Test that update_view still works despite changes to other fns."""
     from chelsea_pyramid_learning_journal.views.default import update_view
-    updated_entry = Journal(
-        author='Chelsea Dole',
-        creation_date='11/30/2017',
-        title='Hogwarts Year 5',
-        body='Harry Potter and the Order of the Phoenix and also some edited text'
-    )
-    dummy_request.dbsession.add(updated_entry)
-    dummy_request.dbsession.commit()
+    updated_entry = {
+        'author': 'Chelsea Dole',
+        'creation_date': '11/30/2017',
+        'title': 'Hogwarts Year 5',
+        'body': 'Harry Potter and the Order of the Phoenix'
+    }
+    dummy_request.method == "POST"
+    dummy_request.POST = updated_entry
     dummy_request.matchdict['id'] = 5
     response = update_view(dummy_request)
     assert response['title'] == 'Edit Entry'
 
 
+def test_create_view_adds_entry_on_post_request(dummy_request):
+    """Test adding entry via create_view."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    entry_ex = {
+        'author': 'Chelsea Dole',
+        'creation_date': '2017-11-07',
+        'title': 'Example',
+        'body': 'a hot bod'
+    }
+    dummy_request.method = "POST"
+    dummy_request.POST = entry_ex
+    create_view(dummy_request)
+    query = dummy_request.dbsession.query(Journal)
+    assert query.get(1).title == 'Example'
+
+
+def tests_request_method_is_httpfound(dummy_request):
+    """."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    dummy_request.method = "POST"
+    dummy_request.POST = {
+        'title': 'New Entry',
+        'body': 'Some additional text',
+        'author': 'Chelsea Dole',
+        'creation_date': '2017-11-07'
+    }
+    response = create_view(dummy_request)
+    assert isinstance(response, HTTPFound)
+
+
+def test_update_view_updates_entry_via_website(dummy_request):
+    """."""
+    from chelsea_pyramid_learning_journal.views.default import update_view
+    new_info = {'title': 'New Title',
+                'body': 'New Body',
+                'author': 'Chelsea Dolewhip',
+                'creation_date': '2017-11-07'
+                }
+    dummy_request.matchdict['id'] = 1
+    dummy_request.method = "POST"
+    dummy_request.POST = new_info
+    update_view(dummy_request)
+    entry = dummy_request.dbsession.query(Journal).get(1)
+    assert entry.title == 'New Title' and entry.body == 'New Body'
+
+
+def test_update_view_sends_http_found(dummy_request):
+    """Test that update view redirects user."""
+    from chelsea_pyramid_learning_journal.views.default import update_view
+    updated_info = {'title': "UPDATED",
+                    'author': 'cdawg',
+                    'body': 'bodyboi',
+                    'creation_date': '2017-11/07'
+                    }
+    dummy_request.method = "POST"
+    dummy_request.matchdict['id'] = 1
+    dummy_request.POST = updated_info
+    response = update_view(dummy_request)
+    assert isinstance(response, HTTPFound)
+
+
 def test_update_view_replaces_existing_journal(dummy_request):
     """Confirm that update view replaces content of original journal."""
     from chelsea_pyramid_learning_journal.views.default import update_view, detail_view
-    original_len = len(dummy_request.dbsession.query(Journal).all())
-    original_journal = Journal(
-        title='Hermione Granger',
-        creation_date='01/23/45',
-        body='ORIGINAL ENTRY'
-    )
+    original_journal = {
+        'title': 'Hermione Granger',
+        'creation_date': '01/23/45',
+        'body': 'ORIGINAL ENTRY'
+    }
     dummy_request.matchdict['id'] = 2
-    dummy_request.dbsession.add(original_journal)
-    assert len(dummy_request.dbsession.query(Journal).all()) == original_len + 1
-    old = detail_view(dummy_request)
+    dummy_request.POST = original_journal
+    response = update_view(dummy_request)
+    assert response['ljpost']['body'] == 'ORIGINAL ENTRY'
     replacement = {
         "title": "Remus Lupin",
         "creation_date": "00/00/4200",
         "body": "Harry Potter and the Prisoner of Azkaban"
     }
+    dummy_request.matchdict['id'] = 2
     dummy_request.POST = replacement
-    update_view(dummy_request)
-    response = dummy_request.dbsession.query(Journal).get(2)
-    assert response.body == 'Harry Potter and the Prisoner of Azkaban'
-    assert response.title == 'yoYOyo'
+    response = update_view(dummy_request)
+    assert response['ljpost']['body'] == 'Harry Potter and the Prisoner of Azkaban'
 
 
 def test_make_sure_update_updates_and_doesnt_just_add_new_journal(dummy_request):
     """Make sure that DB length doesnt change when updating."""
-    from chelsea_pyramid_learning_journal.views.default import update_view, detail_view
+    from chelsea_pyramid_learning_journal.views.default import update_view
     original_len = len(dummy_request.dbsession.query(Journal).all())
     original_journal = Journal(
         title='Sirius Black',
         creation_date='11/11/1111',
-        body='I did my time. 12 year of it! In AZKABAN'
+        body='I did my time. 12 years of it! In AZKABAN'
     )
     dummy_request.dbsession.add(original_journal)
     dummy_request.matchdict['id'] = 1
