@@ -2,9 +2,8 @@
 from pyramid.view import view_config
 from chelsea_pyramid_learning_journal.models import Journal
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound
+from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
 from datetime import datetime
-from sqlalchemy import desc
-
 
 @view_config(route_name='list_view',
              renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
@@ -33,7 +32,8 @@ def detail_view(request):
 
 
 @view_config(route_name='create_view',
-             renderer='chelsea_pyramid_learning_journal:templates/new-entry.jinja2')
+             renderer='chelsea_pyramid_learning_journal:templates/new-entry.jinja2',
+             permission='secret')
 def create_view(request):
     """Show create post page, and process POST request to add new journal to DB."""
     if request.method == 'GET':
@@ -53,7 +53,8 @@ def create_view(request):
 
 
 @view_config(route_name='update_view',
-             renderer='chelsea_pyramid_learning_journal:templates/edit-entry.jinja2')
+             renderer='chelsea_pyramid_learning_journal:templates/edit-entry.jinja2',
+             permission='secret')
 def update_view(request):
     """Show update post page, and process POST request to update database."""
     post_id = int(request.matchdict['id'])
@@ -72,3 +73,49 @@ def update_view(request):
             return HTTPFound(request.route_url('detail_view', id=post_id))
     except AttributeError:
         return HTTPNotFound
+
+
+@view_config(
+    route_name='delete',
+    permission='secret'
+)
+def delete_view(request):
+    """Delete post."""
+    post_id = int(request.matchdict['id'])
+    post = request.dbsession.query(Journal).get(post_id)
+    if not post:
+        raise HTTPNotFound
+    request.dbsession.delete(post)
+    return HTTPFound(request.route_url('list_view'))
+
+
+@view_config(
+    route_name='login',
+    renderer="chelsea_pyramid_learning_journal:templates/login.jinja2",
+    permission=NO_PERMISSION_REQUIRED
+)
+def login(request):
+    """Login page."""
+    if request.authenticated_userid:
+        return HTTPFound(request.route_url('list_view'))
+
+    if request.method == "GET":
+        return {}
+
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        if is_authenticated(username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('list_view'), headers=headers)
+
+        return {
+            'error': 'Username/password combination invalid.'
+        }
+
+
+@view_config(route_name='logout')
+def logout(request):
+    """Logout screen."""
+    headers = forget(request)
+    return HTTPFound(request.route_url('list_view'), headers=headers)
