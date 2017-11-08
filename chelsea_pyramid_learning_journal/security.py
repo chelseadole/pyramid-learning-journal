@@ -11,7 +11,7 @@ from passlib.apps import custom_app_context as pwd_context
 def is_authorized(user, password):
     """Check if the user's username and password are good."""
     if user == os.environ.get('AUTH_USERNAME', ''):
-        if pwd_context.verify(password, os.environ.get('AUTH_PASSWORD', '')):
+        if pwd_context.verify(password, os.environ.get('AUTH_PASSWORD', 'weeeee')):
             return True
     return False
 
@@ -25,7 +25,8 @@ class MyRoot(object):
 
     __acl__ = [
         # (Allow, Everyone, 'view'),
-        (Allow, Authenticated, 'secret')
+        (Allow, Everyone, 'view'),
+        (Allow, Authenticated, 'secret'),
     ]
 
 
@@ -39,4 +40,5 @@ def includeme(config):
     config.set_authentication_policy(authn_policy)
     authz_policy = ACLAuthorizationPolicy()
     config.set_authorization_policy(authz_policy)
+    config.set_default_permission('view')
     config.set_root_factory(MyRoot)

@@ -4,6 +4,8 @@ from chelsea_pyramid_learning_journal.models import Journal
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
 from datetime import datetime
+from chelsea_pyramid_learning_journal.security import is_authorized
+
 
 @view_config(route_name='list_view',
              renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
@@ -108,7 +110,6 @@ def login(request):
         if is_authorized(username, password):
             headers = remember(request, username)
             return HTTPFound(request.route_url('list_view'), headers=headers)
-
         return {
             'error': 'Username/password combination invalid.'
         }

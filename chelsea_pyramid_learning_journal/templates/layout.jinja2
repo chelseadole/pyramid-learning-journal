@@ -29,9 +29,9 @@
             <li class="nav-item">
               <a class="nav-link" href="/journal/new-entry">Create New Entry</a>
             </li>
-            <li><a href="{{ request.route_url('logout') }}">Log Out</a></li>
+            <li><a class="nav-link"href="{{ request.route_url('logout') }}">Log Out</a></li>
             {% else %}
-            <li><a href="{{ request.route_url('login') }}">Log In</a></li>
+            <li><a class="nav-link"href="{{ request.route_url('login') }}">Log In</a></li>
             {% endif %}
           </ul>
         </div>
