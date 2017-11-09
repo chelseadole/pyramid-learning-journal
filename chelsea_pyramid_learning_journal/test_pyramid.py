@@ -91,7 +91,8 @@ def test_list_view_return_journal_instance_with_incomplete_info(dummy_request):
     response = list_view(request)
     assert 'creation_date' not in response
 
-def test_update_view_still_works(dummy_request):
+
+def test_update_view_writes_over_previous_entry(dummy_request):
     """Test that update_view still works despite changes to other fns."""
     from chelsea_pyramid_learning_journal.views.default import update_view, create_view
     original_entry = {
@@ -132,9 +133,9 @@ def test_create_view_adds_entry_on_post_request(dummy_request, db_session):
     query = db_session.query(Journal)
     assert query.get(1).title == 'Example'
 
-# rename test name
-def tests_request_method_is_httpfound(dummy_request):
-    """."""
+
+def tests_create_view_is_instance_of_httpfound(dummy_request):
+    """Create view returns HTTPFound."""
     from chelsea_pyramid_learning_journal.views.default import create_view
     dummy_request.method = "POST"
     dummy_request.POST = {
@@ -146,9 +147,9 @@ def tests_request_method_is_httpfound(dummy_request):
     response = create_view(dummy_request)
     assert isinstance(response, HTTPFound)
 
-# have to add entry first, so this one can replace it. add two here.
-def test_update_view_updates_entry_via_website(dummy_request):
-    """."""
+
+def test_update_view_replaces_title_and_body(dummy_request):
+    """Replace title and entry with new body in via update_view."""
     from chelsea_pyramid_learning_journal.views.default import update_view, create_view
     new_info = {'title': 'Old Title',
                 'body': 'Old Body',
@@ -170,42 +171,20 @@ def test_update_view_updates_entry_via_website(dummy_request):
     assert entry.title == 'Updated Title' and entry.body == 'New Body'
 
 
-def test_update_view_sends_http_found(dummy_request):
-    """Test that update view redirects user."""
-    from chelsea_pyramid_learning_journal.views.default import update_view
-    updated_info = {'title': "UPDATED",
-                    'author': 'cdawg',
-                    'body': 'bodyboi',
-                    'creation_date': '2017-11/07'
-                    }
+def test_create_view_makes_a_new_journal(dummy_request):
+    """Send a post request to my view with data to make a new expense."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    journal_info = {
+        "title": "mytitle",
+        "body": "mybody",
+        "creation_date": "11/11/1111",
+        "author": "me"
+    }
     dummy_request.method = "POST"
-    dummy_request.matchdict['id'] = 1
-    dummy_request.POST = updated_info
-    response = update_view(dummy_request)
-    assert isinstance(response, HTTPFound)
-
-
-def test_update_view_replaces_existing_journal(dummy_request):
-    """Confirm that update view replaces content of original journal."""
-    from chelsea_pyramid_learning_journal.views.default import update_view, detail_view
-    original_journal = {
-        'title': 'Hermione Granger',
-        'creation_date': '01/23/45',
-        'body': 'ORIGINAL ENTRY'
-    }
-    dummy_request.matchdict['id'] = 2
-    dummy_request.POST = original_journal
-    response = update_view(dummy_request)
-    assert response['ljpost']['body'] == 'ORIGINAL ENTRY'
-    replacement = {
-        "title": "Remus Lupin",
-        "creation_date": "00/00/4200",
-        "body": "Harry Potter and the Prisoner of Azkaban"
-    }
-    dummy_request.matchdict['id'] = 2
-    dummy_request.POST = replacement
-    response = update_view(dummy_request)
-    assert response['ljpost']['body'] == 'Harry Potter and the Prisoner of Azkaban'
+    dummy_request.POST = journal_info
+    create_view(dummy_request)
+    expense = dummy_request.dbsession.query(Journal).first()
+    assert expense.title == "mytitle"
 
 
 def test_make_sure_update_updates_and_doesnt_just_add_new_journal(dummy_request):
