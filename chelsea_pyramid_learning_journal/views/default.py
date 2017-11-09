@@ -8,7 +8,8 @@ from chelsea_pyramid_learning_journal.security import is_authorized
 
 
 @view_config(route_name='list_view',
-             renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
+             renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2',
+             require_csrf=False)
 def list_view(request):
     """Show homepage with all listed posts."""
     initial_lst = request.dbsession.query(Journal).all()
@@ -20,7 +21,8 @@ def list_view(request):
 
 
 @view_config(route_name='detail_view',
-             renderer='chelsea_pyramid_learning_journal:templates/detail-entry.jinja2')
+             renderer='chelsea_pyramid_learning_journal:templates/detail-entry.jinja2',
+             require_csrf=False)
 def detail_view(request):
     """Show detailed post page, and give option to update post contents."""
     post_id = int(request.matchdict['id'])
@@ -34,7 +36,8 @@ def detail_view(request):
 
 @view_config(route_name='create_view',
              renderer='chelsea_pyramid_learning_journal:templates/new-entry.jinja2',
-             permission='secret')
+             permission='secret',
+             require_csrf=True)
 def create_view(request):
     """Show create post page, and process POST request to add new journal to DB."""
     if request.method == 'GET':
@@ -55,7 +58,8 @@ def create_view(request):
 
 @view_config(route_name='update_view',
              renderer='chelsea_pyramid_learning_journal:templates/edit-entry.jinja2',
-             permission='secret')
+             permission='secret',
+             require_csrf=True)
 def update_view(request):
     """Show update post page, and process POST request to update database."""
     post_id = int(request.matchdict['id'])
@@ -78,7 +82,8 @@ def update_view(request):
 
 @view_config(
     route_name='delete',
-    permission='secret'
+    permission='secret',
+    require_csrf=False
 )
 def delete_view(request):
     """Delete post."""
@@ -93,7 +98,8 @@ def delete_view(request):
 @view_config(
     route_name='login',
     renderer="chelsea_pyramid_learning_journal:templates/login.jinja2",
-    permission=NO_PERMISSION_REQUIRED
+    permission=NO_PERMISSION_REQUIRED,
+    require_csrf=False
 )
 def login(request):
     """Login page."""
@@ -114,7 +120,7 @@ def login(request):
         }
 
 
-@view_config(route_name='logout')
+@view_config(route_name='logout', require_csrf=False)
 def logout(request):
     """Logout screen."""
     headers = forget(request)
