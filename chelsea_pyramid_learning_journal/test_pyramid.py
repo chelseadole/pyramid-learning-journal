@@ -19,6 +19,47 @@ def tests_home_route_is_200_ok(dummy_request):
     assert response['image'] == 'home-bg.jpg'
 
 
+def test_login_incorrect_password(dummy_request):
+    """Attempt login with incorrect password."""
+    from chelsea_pyramid_learning_journal.views.default import login
+    login_info = {
+        "username": "chelseadole",
+        "password": "wrongpassword"
+    }
+    dummy_request.method = "POST"
+    dummy_request.POST = login_info
+    response = login(dummy_request)
+    assert isinstance(response, dict)
+    assert response['error'] == 'Username/password combination invalid.'
+
+
+def test_login_incorrect_username(dummy_request):
+    """Attempt login with incorrect username."""
+    from chelsea_pyramid_learning_journal.views.default import login
+    login_info = {
+        "username": "wrongusername",
+        "password": "potato"
+    }
+    dummy_request.method = "POST"
+    dummy_request.POST = login_info
+    response = login(dummy_request)
+    assert isinstance(response, dict)
+    assert response['error'] == 'Username/password combination invalid.'
+
+
+def test_login_with_correct_combo(dummy_request):
+    """Attempt login with correct pass/user combo."""
+    from chelsea_pyramid_learning_journal.views.default import login
+    login_info = {
+        "username": "chelseadole",
+        "password": "potato"
+    }
+    dummy_request.method = "POST"
+    dummy_request.POST = login_info
+    response = login(dummy_request)
+    assert isinstance(response, HTTPFound)
+
+
 def test_journal_is_added_to_db(db_session):
     """Journal can be added to DB."""
     first_len = len(db_session.query(Journal).all())
