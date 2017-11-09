@@ -60,6 +60,38 @@ def test_login_with_correct_combo(dummy_request):
     assert isinstance(response, HTTPFound)
 
 
+def test_csrf_session_exists(dummy_request):
+    """Test that CSRF session attribute exists."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    entry_ex = {
+        'author': 'Chelsea Dole',
+        'creation_date': '2017-11-07',
+        'title': 'Example',
+        'body': 'a hot bod'}
+    dummy_request.method = "POST"
+    dummy_request.POST = entry_ex
+    create_view(dummy_request)
+    assert hasattr(dummy_request, session)
+
+
+def test_that_create_view_has_csrf_token():
+    """Test that the csrf_token exists."""
+    new_entry = open('/templates/new-entry.jinja2').read()
+    assert 'csrf_token' in new_entry
+
+    # entry_ex = {
+    #     'author': 'Chelsea Dole',
+    #     'creation_date': '2017-11-07',
+    #     'title': 'Example',
+    #     'body': 'a hot bod'
+    # }
+    # dummy_request.method = "POST"
+    # dummy_request.POST = entry_ex
+    # create_view(dummy_request)
+    # query = db_session.query(Journal)
+    # assert query.get(1).title == 'Example'
+
+
 def test_journal_is_added_to_db(db_session):
     """Journal can be added to DB."""
     first_len = len(db_session.query(Journal).all())
