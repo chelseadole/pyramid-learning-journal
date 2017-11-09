@@ -12,21 +12,6 @@ def test_list_view_returns_dictionary(dummy_request):
     assert isinstance(response, dict)
 
 
-def test_logged_out_user_has_no_access_to_create(dummy_request):
-    """Test that unauthenticated user returns 403 error on detail_view."""
-    assert testapp.get("/journal/1/edit-entry", status=403)
-
-
-def test_create_view_has_title(dummy_request):
-    """Test that response to list_view has image."""
-    from chelsea_pyramid_learning_journal.views.default import create_view
-    testapp.post('/login', {'username': 'chelseadole', 'password': 'potato'})
-    response = testapp.get('/journal/new-entry')
-    token = response.html.find_all('input', {'name': 'crsf_token'})  # is this right?
-    response = create_view(dummy_request)
-    assert response['title'] == 'Create New Entry'
-
-
 def tests_home_route_is_200_ok(dummy_request):
     """Check home route."""
     from chelsea_pyramid_learning_journal.views.default import list_view
@@ -86,12 +71,12 @@ def test_create_view_still_works(dummy_request):
     assert response['title'] == 'Create New Entry'
 
 
-# def test_create_get_request_returns_correct_page(dummy_request):
-#     """POST requests without data should return an empty dictionary."""
-#     from chelsea_pyramid_learning_journal.views.default import create_view
-#     dummy_request.method = "GET"
-#     response = create_view(dummy_request)
-#     assert response['title'] == 'Create New Entry'
+def test_create_get_request_returns_correct_page(dummy_request):
+    """POST requests without data should return an empty dictionary."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    dummy_request.method = "GET"
+    response = create_view(dummy_request)
+    assert response['title'] == 'Create New Entry'
 
 
 def test_list_view_return_journal_instance_with_incomplete_info(dummy_request):
@@ -106,29 +91,30 @@ def test_list_view_return_journal_instance_with_incomplete_info(dummy_request):
     response = list_view(request)
     assert 'creation_date' not in response
 
-
-def test_list_view_http_not_found(dummy_request):
-    """Test HTTPNotFound response when there are no posts."""
-    from chelsea_pyramid_learning_journal.views.default import list_view
-    with pytest.raises(HTTPNotFound):
-        assert list_view(dummy_request)
-
-
-# This is a POST request so 'edit entry' wont pop up. change to part of ljpost.
 def test_update_view_still_works(dummy_request):
     """Test that update_view still works despite changes to other fns."""
-    from chelsea_pyramid_learning_journal.views.default import update_view
-    updated_entry = {
+    from chelsea_pyramid_learning_journal.views.default import update_view, create_view
+    original_entry = {
         'author': 'Chelsea Dole',
         'creation_date': '11/30/2017',
         'title': 'Hogwarts Year 5',
         'body': 'Harry Potter and the Order of the Phoenix'
     }
     dummy_request.method = "POST"
+    dummy_request.POST = original_entry
+    dummy_request.matchdict['id'] = 1
+    response = create_view(dummy_request)
+    assert response.code == 302
+    updated_entry = {
+        'author': 'Chelsea Dole',
+        'creation_date': '11/30/2017',
+        'title': 'UPDATED TITLE',
+        'body': 'Harry Potter and the Order of the Phoenix'
+    }
     dummy_request.POST = updated_entry
-    dummy_request.matchdict['id'] = 5
+    dummy_request.matchdict['id'] = 1
     response = update_view(dummy_request)
-    assert response['title'] == 'Edit Entry'
+    assert isinstance(response, HTTPFound)
 
 
 def test_create_view_adds_entry_on_post_request(dummy_request, db_session):
@@ -164,9 +150,9 @@ def tests_request_method_is_httpfound(dummy_request):
 def test_update_view_updates_entry_via_website(dummy_request):
     """."""
     from chelsea_pyramid_learning_journal.views.default import update_view, create_view
-    new_info = {'title': 'New Title',
-                'body': 'New Body',
-                'author': 'Chelsea Dolewhip',
+    new_info = {'title': 'Old Title',
+                'body': 'Old Body',
+                'author': 'Chelsea',
                 'creation_date': '2017-11-07'
                 }
     dummy_request.method = "POST"
@@ -243,3 +229,18 @@ def test_make_sure_update_updates_and_doesnt_just_add_new_journal(dummy_request)
     dummy_request.POST = update_entry
     update_view(dummy_request)
     assert len(dummy_request.dbsession.query(Journal).all()) == original_len + 1
+
+
+def test_logged_out_user_has_no_access_to_create(dummy_request, testapp):
+    """Test that unauthenticated user returns 403 error on detail_view."""
+    assert testapp.get("/journal/1/edit-entry", status=403)
+
+
+def test_create_view_has_title(dummy_request, testapp):
+    """Test that response to list_view has image."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    testapp.post('/login', {'username': 'chelseadole', 'password': 'potato'})
+    response = testapp.get('/journal/new-entry')
+    token = response.html.find_all('input', {'name': 'crsf_token'})  # is this right?
+    response = create_view(dummy_request)
+    assert response['title'] == 'Create New Entry'

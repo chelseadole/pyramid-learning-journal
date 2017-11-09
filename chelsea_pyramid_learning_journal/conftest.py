@@ -6,7 +6,7 @@ from chelsea_pyramid_learning_journal.models.mymodel import Journal
 from chelsea_pyramid_learning_journal.models.meta import Base
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def configuration(request):
     """Set up a Configurator instance."""
     config = testing.setUp(settings={
