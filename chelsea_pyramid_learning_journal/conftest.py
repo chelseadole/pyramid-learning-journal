@@ -48,8 +48,8 @@ def dummy_request(db_session):
 @pytest.fixture(scope="session")
 def testapp(request):
     """Fake app for testing."""
-    from webtest import TestApp
     from pyramid.config import Configurator
+    from webtest import TestApp
 
     def main():
         settings = {

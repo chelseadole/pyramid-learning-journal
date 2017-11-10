@@ -115,10 +115,11 @@ def test_delete_journal(dummy_request, db_session):
         'body': 'a hot bod'
     }
     dummy_request.method = "POST"
-    dummy_request.matchdict['id'] = 2
+    dummy_request.matchdict['id'] = 1
     dummy_request.POST = to_delete
     create_view(dummy_request)
     query = db_session.query(Journal)
+    dummy_request.matchdict['id'] = query.first().id
     length = len(query.all())
     assert len(query.all()) == length
     query = db_session.query(Journal)
