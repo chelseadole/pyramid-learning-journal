@@ -320,13 +320,3 @@ def test_make_sure_update_updates_and_doesnt_just_add_new_journal(dummy_request)
 def test_logged_out_user_has_no_access_to_create(dummy_request, testapp):
     """Test that unauthenticated user returns 403 error on detail_view."""
     assert testapp.get("/journal/1/edit-entry", status=403)
-
-
-def test_create_view_has_title(dummy_request, testapp):
-    """Test that response to list_view has image."""
-    from chelsea_pyramid_learning_journal.views.default import create_view
-    testapp.post('/login', {'username': 'chelseadole', 'password': 'potato'})
-    response = testapp.get('/journal/new-entry')
-    token = response.html.find_all('input', {'name': 'crsf_token'})  # is this right?
-    response = create_view(dummy_request)
-    assert response['title'] == 'Create New Entry'

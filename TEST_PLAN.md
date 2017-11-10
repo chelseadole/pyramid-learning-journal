@@ -1,6 +1,22 @@
 # Pyramid Learning Journal Tests plan/outline
 #### Chelsea Dole, 11/05/2017
 
+### Security Tests
+
+* *test_logged_out_user_has_no_access_to_create* - Tests that a logged out user cannot access the create post page. 
+
+* *test_delete_journal* - Test that the delete_view (added in security step) is functional. 
+
+* *test_csrf_token_exists* - Test that the CSRF token exists for a logged in user sending a request. 
+
+* *test_login_with_correct_combo* - Test that when the correct login info is entered, new views become available for the user. 
+
+* *test_login_incorrect_username* - Test that when one attempts login with the incorrect username, they are denied and an "error" message appears. 
+
+* *test_login_incorrect_password* - Tests that when one attempts login with the incorrect password, they are denied and an "error" message appears. 
+
+* *test_create_view_can_be_seen_when_logged_in* - Tests that the user's view changes once they are logged in, and that they then have access to writing posts. 
+
 
 ### Step 3 and 4 Tests
 
@@ -30,7 +46,10 @@
 
 * *test_make_sure_update_updates_and_doesnt_just_add_new_journal* - 2nd test for adding a new entry to overwrite old entry through update_view
 
-### Step 2 Tests (Those not included in step 4 list)
+* *tests_home_route_is_200_ok* - Test that home route returns 200 OK HTTP response. 
+
+
+### Step 2 Tests
 
 * *test_list_view_response_title* - Checks that list_view returns the correct response title as a key in a dictionary. 
 
@@ -53,3 +72,6 @@
 * *test_update_entry_raises_http_error* - Checks that HTTPNotFound is raised when update_view is used with  an id that doesn't exist. 
 
 * *test_update_entry_error_type* - Tests that the request response status is 404 when a 404 error (for a nonexistant ID) is raised in update_view
+
+* *test_detail_view_with_incorrect_request_type* - Tests that if one sends a POST request with a body of None, only an empty dict is returned. 
+
