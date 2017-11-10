@@ -12,6 +12,30 @@ def test_list_view_returns_dictionary(dummy_request):
     assert isinstance(response, dict)
 
 
+def test_detail_view_dict_contents_correct(dummy_request, db_session):
+    """Test that list_view dict contents are accurate."""
+    from chelsea_pyramid_learning_journal.views.default import detail_view
+    ex_journal = Journal(
+        title='Harry Potter and the Chamber of Secrets',
+        creation_date='11/13/2017',
+        body='Today I fought a snake',
+        author='Chelsea Dole'
+    )
+    db_session.add(ex_journal)
+    db_session.commit()
+    dummy_request.matchdict['id'] = 1
+    response = detail_view(dummy_request)
+    assert response['image'] == 'post-bg.jpg'
+
+
+def test_detail_view_with_incorrect_request_type(dummy_request):
+    """Test that d_v returns empty dict with PUT request."""
+    from chelsea_pyramid_learning_journal.views.default import create_view
+    dummy_request.method = "POST"
+    dummy_request.POST = None
+    assert create_view(dummy_request) == {}
+
+
 def tests_home_route_is_200_ok(dummy_request):
     """Check home route."""
     from chelsea_pyramid_learning_journal.views.default import list_view
@@ -60,36 +84,23 @@ def test_login_with_correct_combo(dummy_request):
     assert isinstance(response, HTTPFound)
 
 
-def test_csrf_session_exists(dummy_request):
-    """Test that CSRF session attribute exists."""
-    from chelsea_pyramid_learning_journal.views.default import create_view
-    entry_ex = {
+def test_delete_journal(dummy_request, db_session):
+    """Test that delete journal removes item from DB."""
+    from chelsea_pyramid_learning_journal.views.default import delete_view, create_view
+    to_delete = {
         'author': 'Chelsea Dole',
         'creation_date': '2017-11-07',
         'title': 'Example',
-        'body': 'a hot bod'}
+        'body': 'a hot bod'
+    }
     dummy_request.method = "POST"
-    dummy_request.POST = entry_ex
+    dummy_request.matchdict['id'] = 1
+    dummy_request.POST = to_delete
     create_view(dummy_request)
-    assert hasattr(dummy_request, session)
-
-
-def test_that_create_view_has_csrf_token():
-    """Test that the csrf_token exists."""
-    new_entry = open('/templates/new-entry.jinja2').read()
-    assert 'csrf_token' in new_entry
-
-    # entry_ex = {
-    #     'author': 'Chelsea Dole',
-    #     'creation_date': '2017-11-07',
-    #     'title': 'Example',
-    #     'body': 'a hot bod'
-    # }
-    # dummy_request.method = "POST"
-    # dummy_request.POST = entry_ex
-    # create_view(dummy_request)
-    # query = db_session.query(Journal)
-    # assert query.get(1).title == 'Example'
+    query = db_session.query(Journal)
+    assert query.get(1).title == 'Example'
+    delete_view(dummy_request)
+    assert len(query.all()) == 0
 
 
 def test_journal_is_added_to_db(db_session):

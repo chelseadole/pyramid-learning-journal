@@ -64,7 +64,6 @@ def update_view(request):
     """Show update post page, and process POST request to update database."""
     post_id = int(request.matchdict['id'])
     target_journal = request.dbsession.query(Journal).get(post_id)
-    print(target_journal)
     try:
         if request.method == "GET":
             return {'ljpost': target_journal,
