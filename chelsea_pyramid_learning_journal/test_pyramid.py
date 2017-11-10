@@ -84,6 +84,27 @@ def test_login_with_correct_combo(dummy_request):
     assert isinstance(response, HTTPFound)
 
 
+def test_csrf_token_exists(testapp):
+    """."""
+    login_info = {
+        "username": "chelseadole",
+        "password": "potato"
+    }
+    testapp.post('/login', login_info)
+    response = testapp.get('/journal/new-entry')
+    token = response.html.find('input', {'type': 'hidden'}).attrs['value']
+    new_post = {
+        'csrf_token': token,
+        'author': 'Chelsea',
+        'creation_date': '11/11/1111',
+        'title': 'MYTITLE',
+        'body': 'MYBODY'
+    }
+    testapp.post('/journal/new-entry', new_post)
+    assert new_post['title'] in testapp.get('/').ubody
+    testapp.get('/logout')
+
+
 def test_delete_journal(dummy_request, db_session):
     """Test that delete journal removes item from DB."""
     from chelsea_pyramid_learning_journal.views.default import delete_view, create_view
@@ -94,13 +115,15 @@ def test_delete_journal(dummy_request, db_session):
         'body': 'a hot bod'
     }
     dummy_request.method = "POST"
-    dummy_request.matchdict['id'] = 1
+    dummy_request.matchdict['id'] = 2
     dummy_request.POST = to_delete
     create_view(dummy_request)
     query = db_session.query(Journal)
-    assert query.get(1).title == 'Example'
+    length = len(query.all())
+    assert len(query.all()) == length
+    query = db_session.query(Journal)
     delete_view(dummy_request)
-    assert len(query.all()) == 0
+    assert len(query.all()) == length - 1
 
 
 def test_journal_is_added_to_db(db_session):
