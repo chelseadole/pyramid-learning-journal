@@ -84,6 +84,13 @@ def test_login_with_correct_combo(dummy_request):
     assert isinstance(response, HTTPFound)
 
 
+def test_login_get_request(dummy_request):
+    """Test that when a GET request is sent to login, it returns empty dict."""
+    from chelsea_pyramid_learning_journal.views.default import login
+    dummy_request.method = "GET"
+    assert login(dummy_request) == {}
+
+
 def test_csrf_token_exists(testapp):
     """."""
     login_info = {
