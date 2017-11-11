@@ -7,6 +7,8 @@
 
 * *test_delete_journal* - Test that the delete_view (added in security step) is functional. 
 
+* *test_delete_nonexistent_journal* - Test that delete journal returns HTTPNotFound when sent a nonexistant id. 
+
 * *test_csrf_token_exists* - Test that the CSRF token exists for a logged in user sending a request. 
 
 * *test_login_with_correct_combo* - Test that when the correct login info is entered, new views become available for the user. 
@@ -16,6 +18,8 @@
 * *test_login_incorrect_password* - Tests that when one attempts login with the incorrect password, they are denied and an "error" message appears. 
 
 * *test_create_view_can_be_seen_when_logged_in* - Tests that the user's view changes once they are logged in, and that they then have access to writing posts. 
+
+* *test_login_get_request* - Tests that when a GET request is sent to the login page, it returns just an empty dict.
 
 
 ### Step 3 and 4 Tests
