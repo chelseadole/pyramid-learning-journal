@@ -80,10 +80,10 @@ def testapp(request):
 @pytest.fixture(scope="session")
 def fill_the_db(testapp):
     """Fill test DB."""
-    SessionFactory = testapp.app.registry["dbsession_factory"]
-    with transaction.manager:
-        dbsession = get_tm_session(SessionFactory, transaction.manager)
-        dbsession.add_all(JOURNALS)
+    SessionFactory = testapp.app.registry["dbsession_factory"]  # pragma: no cover
+    with transaction.manager:  # pragma: no cover
+        dbsession = get_tm_session(SessionFactory, transaction.manager)  # pragma: no cover
+        dbsession.add_all(JOURNALS)  # pragma: no cover
 
 JOURNALS = []
 for i in range(20):
