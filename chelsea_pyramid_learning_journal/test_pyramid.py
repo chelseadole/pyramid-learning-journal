@@ -127,6 +127,14 @@ def test_delete_journal(dummy_request, db_session):
     assert len(query.all()) == length - 1
 
 
+def test_delete_nonexistent_journal(dummy_request):
+    """Test that deleting a journal that doesn't exist leads to HTTPNotFound."""
+    from chelsea_pyramid_learning_journal.views.default import delete_view
+    dummy_request.matchdict['id'] = 500000
+    with pytest.raises(HTTPNotFound):
+        assert delete_view(dummy_request)
+
+
 def test_journal_is_added_to_db(db_session):
     """Journal can be added to DB."""
     first_len = len(db_session.query(Journal).all())
