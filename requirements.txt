@@ -1,14 +1,15 @@
 beautifulsoup4==4.6.0
--e git+https://github.com/chelseadole/pyramid-learning-journal.git@b7ee2926e79a340b2068a669b994ae18a62e5048#egg=chelsea_pyramid_learning_journal
 coverage==4.4.1
 hupper==1.0
 Jinja2==2.9.6
 Mako==1.0.7
 MarkupSafe==1.0
+passlib
 PasteDeploy==1.5.2
 plaster==1.0
 plaster-pastedeploy==0.4.1
 pluggy==0.5.2
+psycopg2==2.7.3.2
 py==1.4.34
 Pygments==2.2.0
 pyramid==1.9.1

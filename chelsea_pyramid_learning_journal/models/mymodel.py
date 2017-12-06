@@ -21,4 +21,4 @@ class Journal(Base):
 
     def __repr__(self):
         """Return LJ id."""
-        return '<LJ ID: {}>'.format(self.id)
+        return '<{}, {}, {}, {}, {}>'.format(self.id, self.author, self.creation_date, self.title, self.body)

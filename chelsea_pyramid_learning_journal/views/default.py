@@ -1,26 +1,30 @@
 """Create callables for calling routes."""
 from pyramid.view import view_config
 from chelsea_pyramid_learning_journal.models import Journal
-from pyramid.httpexceptions import HTTPNotFound
-from chelsea_pyramid_learning_journal.data.LJ_entries import POST
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound
+from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
+from datetime import datetime
+from chelsea_pyramid_learning_journal.security import is_authorized
 
 
 @view_config(route_name='list_view',
-             renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2')
+             renderer='chelsea_pyramid_learning_journal:templates/homepage.jinja2',
+             require_csrf=False)
 def list_view(request):
-    """Parse file path and pass it to response to serve home page."""
-    posts = request.dbsession.query(Journal).all()
-    if posts is None:
-        raise HTTPNotFound
+    """Show homepage with all listed posts."""
+    initial_lst = request.dbsession.query(Journal).all()
+    posts = sorted(initial_lst, key=lambda e: e.creation_date, reverse=True)
     return {'ljposts': posts,
-            'title': 'Chelsea LJ',
+            'title': 'Learning Journal',
+            'subhead': 'Chelsea Dole',
             'image': "home-bg.jpg"}
 
 
 @view_config(route_name='detail_view',
-             renderer='chelsea_pyramid_learning_journal:templates/detail-entry.jinja2')
+             renderer='chelsea_pyramid_learning_journal:templates/detail-entry.jinja2',
+             require_csrf=False)
 def detail_view(request):
-    """Parse file path and pass it to response to serve home page."""
+    """Show detailed post page, and give option to update post contents."""
     post_id = int(request.matchdict['id'])
     post = request.dbsession.query(Journal).get(post_id)
     if post is None:
@@ -31,22 +35,92 @@ def detail_view(request):
 
 
 @view_config(route_name='create_view',
-             renderer='chelsea_pyramid_learning_journal:templates/new-entry.jinja2')
+             renderer='chelsea_pyramid_learning_journal:templates/new-entry.jinja2',
+             permission='secret',
+             require_csrf=True)
 def create_view(request):
-    """Parse file path and pass it to response to serve home page."""
-    return {'title': 'Create New Entry',
-            'image': 'new-entry.jpg'}
+    """Show create post page, and process POST request to add new journal to DB."""
+    if request.method == 'GET':
+        return {'title': 'Create New Entry',
+                'image': 'new-entry.jpg'}
+    if request.method == 'POST' and request.POST:
+        now = str(datetime.now())[:10]
+        new_entry = Journal(
+            title=request.POST['title'],
+            body=request.POST['body'],
+            creation_date=now,
+            author='Chelsea Dole'
+        )
+        request.dbsession.add(new_entry)
+        return HTTPFound(request.route_url('list_view'))
+    return {}
 
 
 @view_config(route_name='update_view',
-             renderer='chelsea_pyramid_learning_journal:templates/edit-entry.jinja2')
+             renderer='chelsea_pyramid_learning_journal:templates/edit-entry.jinja2',
+             permission='secret',
+             require_csrf=True)
 def update_view(request):
-    """Parse file path and pass it to response to serve home page."""
+    """Show update post page, and process POST request to update database."""
     post_id = int(request.matchdict['id'])
-    for post in POST:
-        if post['id'] == post_id:
-            return {'ljpost': post,
+    target_journal = request.dbsession.query(Journal).get(post_id)
+    try:
+        if request.method == "GET":
+            return {'ljpost': target_journal,
                     'image': 'post-bg.jpg',
                     'title': 'Edit Entry'}
+        if request.method == "POST":
+            target_journal.body = request.POST['body']
+            target_journal.title = request.POST['title']
+            request.dbsession.add(target_journal)
+            request.dbsession.flush()
+            return HTTPFound(request.route_url('detail_view', id=post_id))
+    except AttributeError:
+        return HTTPNotFound
 
-    raise HTTPNotFound
+
+@view_config(
+    route_name='delete',
+    permission='secret',
+    require_csrf=False
+)
+def delete_view(request):
+    """Delete post."""
+    post_id = int(request.matchdict['id'])
+    post = request.dbsession.query(Journal).get(post_id)
+    if not post:
+        raise HTTPNotFound
+    request.dbsession.delete(post)
+    return HTTPFound(request.route_url('list_view'))
+
+
+@view_config(
+    route_name='login',
+    renderer="chelsea_pyramid_learning_journal:templates/login.jinja2",
+    permission=NO_PERMISSION_REQUIRED,
+    require_csrf=False
+)
+def login(request):
+    """Login page."""
+    if request.authenticated_userid:
+        return HTTPFound(request.route_url('list_view'))
+
+    if request.method == "GET":
+        return {}
+
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        if is_authorized(username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('list_view'), headers=headers)
+        return {
+            'error': 'Username/password combination invalid.'
+        }
+
+
+@view_config(route_name='logout', require_csrf=False)
+def logout(request):
+    """Logout screen."""
+    headers = forget(request)
+    return HTTPFound(request.route_url('list_view'), headers=headers)

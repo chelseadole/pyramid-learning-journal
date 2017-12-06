@@ -25,9 +25,16 @@
             <li class="nav-item">
               <a class="nav-link" href="/">Home</a>
             </li>
+            {% if request.authenticated_userid %}
             <li class="nav-item">
               <a class="nav-link" href="/journal/new-entry">Create New Entry</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ request.route_url('logout') }}">Log Out</a></li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ request.route_url('login') }}">Log In</a></li>
+            {% endif %}
           </ul>
         </div>
       </div>
@@ -38,7 +45,9 @@
               <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="site-heading">
                   <h1>{{ title }}</h1>
-                  {# <span class="subheading">Chelsea Dole</span> #}
+                  {% if subhead %}
+                  <h2 class="subheading">{{ subhead }}</h2>
+                  {% endif %}
                 </div>
               </div>
             </div>

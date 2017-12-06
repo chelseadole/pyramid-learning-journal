@@ -7,8 +7,11 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
-            <h4><a href="{{ request.route_url('update_view', id=ljpost.id)}}">Edit Entry</a></h4><br>
-                <p>{{ ljpost.body }}</p>
+            <p>{{ ljpost.body }}</p>
+            {% if request.authenticated_userid %}
+            <a class="btn btn-secondary float-left" href="{{ request.route_url('update_view', id=ljpost.id)}}">Edit Entry</a>
+            <a class="btn btn-secondary float-right" href="{{ request.route_url('delete', id=ljpost.id) }}">Delete Entry</a>
+            {% endif %}
           </div>
         </div>
       </div>
