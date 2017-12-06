@@ -97,7 +97,8 @@ def test_csrf_token_exists(testapp):
         "username": "chelseadole",
         "password": "potato"
     }
-    testapp.post('/login', login_info)
+    response1 = testapp.post('/login', login_info)
+    assert response1.status_code == 302
     response = testapp.get('/journal/new-entry')
     token = response.html.find('input', {'type': 'hidden'}).attrs['value']
     new_post = {
@@ -108,7 +109,7 @@ def test_csrf_token_exists(testapp):
         'body': 'MYBODY'
     }
     testapp.post('/journal/new-entry', new_post)
-    assert new_post['title'] in testapp.get('/').ubody
+    assert 'MYTITLE' in testapp.get('/').ubody
     testapp.get('/logout')
 
 
